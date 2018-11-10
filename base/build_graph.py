@@ -1,7 +1,4 @@
-from collections import namedtuple
 
-TensorShape = namedtuple('TensorShape', ['batch', 'height', 'width', 'channel'])
-KernelShape = namedtuple('KernelShape', ['kernel_h', 'kernel_w', 'in_channel', 'out_channel'])
 
 class Node(object):
 
