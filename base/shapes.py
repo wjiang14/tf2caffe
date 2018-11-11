@@ -108,7 +108,7 @@ def shape_squeeze(node, graph=None):
                 temp.append(int(shape))
         node.output_shape = TensorShape._make(temp)
     else:
-        node.output_shape = TensorShape._make([shape for shape in input_node.output_shape if shape != 1])
+        node.output_shape = TensorShape._make([int(shape) for shape in input_node.output_shape if shape != 1])
 
 
 def shape_placeholder(node, graph=None):
