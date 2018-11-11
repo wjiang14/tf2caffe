@@ -13,7 +13,7 @@ class TFResolver(object):
 
     def load(self, *args):
         """
-        :param args: 0: path of py file (TF net defination); 1: batch_size, 2: height, 3: width, 4: channel
+        :param args: 0: path of py file (TF net defination); 1: function name, 2: batch_size, 3: height, 4: width, 5: channel
         :return:
         """
         try:
