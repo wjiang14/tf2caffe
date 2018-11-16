@@ -268,6 +268,19 @@ class TFGraphBuilder(GraphBuilder, object):
             raise Exception("Input of Conv2D should be weights/read, check your weights input(%s) of Conv2D layer[op]" %node.parents[1])
         logging.info("Finished converting %s", node.name)
 
+    def convert_RealDiv(self, node):
+        # deal with dropout layer
+        # In tensorflow, the dropout layer is consist of several ops, such as Mul, Add, Floor, RealDiv, et al.
+        # To implement dropout, tensorflow need a keep_prob to generate a random mask, we need scope information to
+        # deal with dropout layer, I cannot find a better solution currently.
+        if "dropout" in node.name:
+            node.set_convert_flag()
+            keep_prob_node_name = node.parents[1]
+            keep_prob_node = self.tf_graph.get_node(keep_prob_node_name)
+            assert keep_prob_node.layer.op == "Const"
+            node.kwargs['keep_prob'] = float(keep_prob_node.layer.attr['value'].tensor.float_val[0])
+        logging.info("Finished converting %s", node.name)
+
     def convert_Relu(self, node):
         node.set_convert_flag()
         logging.info("Finished converting %s", node.name)
@@ -287,15 +300,6 @@ class TFGraphBuilder(GraphBuilder, object):
     def convert_BiasAdd(self, node):
         node.set_convert_flag()
         logging.info("Finished converting %s", node.name)
-
-    def convert_RealDiv(self, node):
-        node.set_convert_flag()
-        scopes = node.name.split("/")[:-1]
-        if "dropout" in scopes:
-            pass
-        else:
-            # TODO need to write Mul op code
-            pass
 
     def convert_Mul(self, node):
         node.set_convert_flag()
